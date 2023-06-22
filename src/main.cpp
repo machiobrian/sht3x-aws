@@ -4,7 +4,7 @@
 #include <PubSubClient.h>
 #include <ArduinoJson.h>
 
-#include <secrets.h>
+#include "secrets.h"
 #include "sensor.h"
 
 // define an esp32:pub/sub topic
@@ -13,7 +13,7 @@
 
 WiFiClientSecure net = WiFiClientSecure();
 PubSubClient client(net);
-float h, t;
+float h, t = 0.0;
 
 // define a function protoype for the message handler
 void messageHandler(char* topic, byte* payload, unsigned int length);
@@ -51,7 +51,7 @@ void connectAWS(){
 }
 
 void publishMessage(){
-  StaticJsonDocument<200> doc; // create a JSON object
+  StaticJsonDocument<200> doc; // create a JSON object, of capacity 200 bytes (the default) 
   doc["humidity"] = h;
   doc["temperature"] = t;
   char jsonBuffer[512]; // create a buffer to hold the JSON object
@@ -73,5 +73,16 @@ void messageHandler(char* topic, byte* payload, unsigned int length){
 void setup(){
   Serial.begin(115200);
   connectAWS(); // connect to AWS IoT 
+  sensorSetup(); // setup sensor
   Serial.println("Setup complete");
+}
+
+void loop(){
+  while (1)
+  {
+    sensorLoop(); // get sensor data
+    publishMessage(); // publish sensor data to AWS IoT
+    client.loop(); // check for messages
+    delay(1000);
+  }
 }

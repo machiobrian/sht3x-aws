@@ -6,8 +6,8 @@ bool enableHeater = false;
 uint8_t loopCount = 0;
 Adafruit_SHT31 sht31 = Adafruit_SHT31(); // Create sensor object
 
-void setup(){
-    Serial.begin(115200);
+void sensorSetup(){
+    // Serial.begin(115200); // initialize only a single instance in main.cpp 
     
     Serial.println("SHT31 t&h test");
     if (!sht31.begin(0x44)) {
@@ -20,9 +20,11 @@ void setup(){
     }else{Serial.println("Disabled");}
 }
 
-void loop(){
-    float t = sht31.readTemperature();
-    float h = sht31.readHumidity();
+void sensorLoop(){
+    extern float t;
+    t = sht31.readTemperature(); // read temperature in degrees C (float) 
+    extern float h;
+    h = sht31.readHumidity(); // read humidity in % (float)
 
     if(!isnan(t) && !isnan(h)){//if both readings are not NaN
     // Print the readings
