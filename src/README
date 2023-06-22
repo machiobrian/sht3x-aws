@@ -1,0 +1,6 @@
+WiFiClientSecure : class that implements support for secure connections using TLS(SSL).
+It inherits from WiFiClient and thus implements a superset of that class' interface.
+
+To establish a secure connection, we make use of AWS's:
+- CA: Certificate Authority
+- Client cert keys.
