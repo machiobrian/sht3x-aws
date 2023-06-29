@@ -4,12 +4,13 @@
 #include <PubSubClient.h>
 #include <ArduinoJson.h>
 
-#include "secrets.h"
+// #include "secrets.h"
 #include "sensor.h"
+#include "secrets_machio.h"
 
 // define an esp32:pub/sub topic
-#define AWS_IOT_PUBLISH_TOPIC "esp32/pub"
-#define AWS_IOT_SUBSCRIBE_TOPIC "esp32/sub"
+#define AWS_IOT_PUBLISH_TOPIC "sht3xpublish"
+#define AWS_IOT_SUBSCRIBE_TOPIC "sht3xsubscribe"
 
 WiFiClientSecure net = WiFiClientSecure();
 PubSubClient client(net);
@@ -49,9 +50,16 @@ void connectAWS(){
   client.subscribe(AWS_IOT_SUBSCRIBE_TOPIC);
   Serial.println("AWS IoT connection established");
 }
+// add a shadow updater function 
+void shadowUpdater(){
+  
+}
 
 void publishMessage(){
   StaticJsonDocument<200> doc; // create a JSON object, of capacity 200 bytes (the default) 
+  // include the device name and the current time in the JSON object
+  doc["deviceid"] = THINGNAME;
+  doc["timestamp"] = int(millis()); // add timestamp to code 
   doc["humidity"] = h;
   doc["temperature"] = t;
   char jsonBuffer[512]; // create a buffer to hold the JSON object
