@@ -9,8 +9,8 @@
 #include "secrets_machio.h"
 
 // define an esp32:pub/sub topic
-#define AWS_IOT_PUBLISH_TOPIC "sht3xpublish"
-#define AWS_IOT_SUBSCRIBE_TOPIC "sht3xsubscribe"
+#define AWS_IOT_SUBSCRIBE_TOPIC "thing415/sub"
+#define AWS_IOT_PUBLISH_TOPIC "thing415/pub"
 
 WiFiClientSecure net = WiFiClientSecure();
 PubSubClient client(net);
@@ -69,8 +69,8 @@ void publishMessage(){
 }
 
 void messageHandler(char* topic, byte* payload, unsigned int length){
-  Serial.println("Incoming message: ");
-  Serial.println(topic);
+  // Serial.println("Incoming message: ");
+  // Serial.println(topic);
   
   StaticJsonDocument<200> doc; // create a JSON object
   deserializeJson(doc, payload); // deserialize the JSON object from the buffer
@@ -91,6 +91,5 @@ void loop(){
     sensorLoop(); // get sensor data
     publishMessage(); // publish sensor data to AWS IoT
     client.loop(); // check for messages
-    delay(1000);
   }
 }
